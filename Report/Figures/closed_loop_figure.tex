@@ -46,7 +46,7 @@ output/.style   = {coordinate} % Output
 \draw[-] (suma2) -- (plant);
 \draw[-] (plant) -- (branch2.center);
 \draw[-] (branch2.center) |- (branch3);
-\draw[->] (branch3) -| node {\(\omega_{Real,l,r}\)} node[pos=0.97, xshift=-5] {\huge $-$} (suma1);
+\draw[->] (branch3) -| node[pos=0.30, label={\(\omega_{Real,l,r}\)}] {} node[pos=0.97, xshift=-5] {\huge $-$} (suma1);
 
 \filldraw
   (branch1) circle (2pt)
