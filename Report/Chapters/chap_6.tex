@@ -1,0 +1,28 @@
+Ich wollte in diesem Kapitel nur ein paar Probleme und L"osungen von dem Projekt schreiben, sodass ich ein besseres Bild des ganzen Prozesses pr"asentieren kann. \\
+
+In diesem Seminar sind bei Control vier Probleme rausgekommen. Interessanterweise hat jede Teilaufgabe ein gro"ses Problem, das gel"ost werden muss. Die Probleme waren die Implementation des Reglers auf der Linienverfolgung, ein Missverst"andnis bei dem Unterschied von Steureung und Regelung der \(v/\omega\)-Control, die ganze Positionsregelung und die Berechnung von \(v/\omega\) aus der Parkbahn. \\
+
+F"ur die Linienverfolgung wurde am Anfang ein andere Regler implementiert. Zwei Regelgr"o"sen wurden $y_1(t)$ und \(y_2(t)\) betrachtet. Dabei handelt es sich um die Lichtintensit"aten von beiden Lichtsensoren, die zwischen \si{0\percent} (Schwarz) und \si{100\percent} (Weiss) angegeben wurden. Zwei F"uhrungsgr"o"sen $x_1(t)$ und $x_2(t)$von 100\% wurden eingef"uhrt, sodass sich zwei Regelfehler $e_1(t)$ und $e_2(t)$ ergeben:
+\begin{equation*}
+    \si{100\percent} \: (Weiss) - Lichtintensit"at_{L,R} = Regelfehler \: e_{1,2}(t).
+\end{equation*}
+
+Den zwei Regelfehler wurden die zwei PID-Regler zugef"uhrt, sodass die Regler die zwei Stellgr"o"sen \(u_1(t)\) und \(u_2(t)\) f"ur die beiden Motoren ausgegeben haben. Dies sind die PWM-Abweichungen \(u_{PWM,1}\) und \(u_{PWM,2}\), die zwischen \si{0\percent} und \si{100\percent} liegen. Die Stellgr"o"sen schwanken um einen Arbeitspunkt \(u_{PWM,AP}\) von \si{37\percent}. Der Regler sollte die PWM-Werte so "andern, dass der Roboter die schwarze Linie verfolgt hat. Deshalb musste der Regler mit verschiedenen Werten f"ur \(Kp, Ki, Kd\) justiert werden. Wegen der zwei Regelgr"o"sen war es n"otig, zwei Tupel von PID-Konstanten zu justieren. Aber wegen der Gleichheit der Motoren k"onnten beide Regler die gleichen Konstanten haben. Deswegen hatten bei dieser Implementation beide Regelgr"o"sen den gleichen Regelkreis. \\
+
+Diese Methode war leider fehlerhaft. Die Annahme, dass beide Motoren das Gleiche sind, war falsch. Im Kapitel 3 wurde es dann gezeigt, dass die beide Motoren unterschiedliche Motorkonstante \(k_m\) hatten. Deswegen mussten die PID-Regler zwei Tupel von Konstanten haben. \\
+
+Es war zu schwierig zwei Regler gleichzeitig zu justieren, deshalb habe ich zu der anderen Methode, als ich im Kapitel 2 geschrieben habe.
+
+Bei dem \(v/\omega\)-Control konnte ich die Steuerung relativ schnell implementieren. Das Problem war die Regelung. Als ich am Anfang die Regelung implementiert habe, war ich "uberhaupt nicht sicher, warum ich den Regler nicht justieren konnte. Ich habe Monate darauf gearbeitet. Die L"osung kam, als ich einfach alles zu meiner Gruppe gekl"art habe. Anscheidend habe ich immer den Reglerausgang direkt in der Steuerungsgleichung geschickt, statt der Regelstrecke (die Motoren). Dieses Problem lag einfach auf dem Grund, dass ich damals die Implementierung eines Regelkreises auf Hardware nicht verstanden habe. Als ich dieses Missverst"andnis korrigiert habe, konnte ich dann auf der anderen Versionen der Regler weiterarbeiten, wie ich im Kapitel 3 geschrieben habe. \\ 
+
+Es gab zwei Probleme bei der Positionsregelung. Das erste Problem war einfach eine Zeitbegrenzung, die nur an mich liegt. Ich hatte schon Fl"uge nach den USA gebucht, deshalb hatte ich nur zwei Tage zu testen. Falls ich die Positionsregelung nicht implementieren k"onnte, muss ich dann aufh"oren, weil meine Partner hatten, noch viel zu testen. Das zweite Problem war die Blockade, die ich in der Zeit nicht beseitigen konnte. Wenn der Roboter einen Zielpunkt bekommt, der nicht kollinear mit der \(X_2\)-Richtung des Roboters ist, dreht er sich, bis er damit kollinear ist. Das erste Problem ist, dass er dann manchmal um diese Richtung oscilliert. Das zweite Problem ist, wenn eine Grenze implementiert ist, sodass er nicht mehr darum oscilliert, f"angt er manchmal an, gerade zu fahren und manchmal nicht. Wenn der Roboter f"ahrt, f"ahrt er dann nicht geradelinig und immer in einem gro"sen Bogen. In den zwei Tagen konnte ich dieses Problem nicht l"osen und musste ich der Roboter an meiner Gruppe "ubergeben. \\
+
+Ehrlich zu sagen, gab es nicht ein gro"ses Problem. Aber ich hatte ein Problem bei der Berechnung von \(\omega\) aus der Modellgleichung. Ich dachte, dass die Gleichung 
+\begin{equation*}
+    x_3 = \arctan(\frac{x_2}{x_1})
+\end{equation*}
+richtig war. Aber die echte Gleichung wie vorhin geschrieben ist
+\begin{equation*}
+    x_3 = \arctan(\frac{\dot{x}_2}{\dot{x}_1}).
+\end{equation*}
+Als ich dieses Problem gel"ost habe, konnte ich den richtigen Wert von \(\omega\) finden und konnte ich das Ein-/Ausparken testen. Dabei musste ich nur den richtigen Zeitdauer der Bewegung finden, was nicht wirklich schwierig war.

@@ -1,0 +1,42 @@
+\documentclass{tudscrartcl}
+\usepackage[ngerman]{babel}
+\usepackage{textcomp}
+\usepackage{standalone}[subpreambles=false]
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{nicefrac}
+\usepackage{mathtools}
+\usepackage[locale=DE]{siunitx}
+\usepackage{graphicx}
+\usetikzlibrary{shapes,arrows,positioning}
+\graphicspath{{./Images/}}
+
+
+\title{Control}
+\author{James Vero Asghar}
+
+\begin{document}
+    \pagenumbering{gobble}
+    \maketitle
+    \newpage
+    \pagenumbering{arabic}
+
+\section{Analyse der Aufgabenstellung}
+    \input{Chapters/chap_1.tex}
+
+\section{Linienverfolgung}
+    \input{Chapters/chap_2.tex}
+
+\section{\(v/\omega\)-Control}
+    \input{Chapters/chap_3.tex}
+
+\section{Regelung der Geradeausfahrt}
+    \input{Chapters/chap_4.tex}
+
+\section{Ein- und Ausparken}
+    \input{Chapters/chap_5.tex}
+
+\section{Anmerkungen und Verbesserungsm"oglichkeiten}
+    \input{Chapters/chap_6.tex}
+
+\end{document}

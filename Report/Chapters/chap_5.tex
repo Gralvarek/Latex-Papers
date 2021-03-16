@@ -1,0 +1,141 @@
+\subsection{Theoretische Vorbetrachtung}
+
+Nun wird ein Ein-/Ausparkalgorithmus implementiert. Das heißt, dass der Roboter von der Linien zu dem Mittelpunkt einer Parklücke fährt und dann mit einem bestimmten Kommando wieder zur Linie fährt. Es gibt ein paar Methoden, um dieses Ziel zu implementieren. Die sind ein Drehen-Fahren-Drehen-Sequenzen, eine ein dimensionale Trajektorie und eine zwei dimensionale Trajektorie. \\
+
+Als erstes kann der Roboter nach der Anerkennung der Parklücke stoppen, dann schrittweise drehen und fahren, bis der Roboter am Zielpunkt angekommen ist. Diese Methode ist einerseits einfach zu implementieren, andererseits ist es langsam und braucht einen zusätzlichen Regler, weil der Roboter wissen muss, wie weit es drehen und fahren muss. \\
+
+Die zweite Methode für das Algorithmus ist eine ein dimensionale Trajektorie. Das heißt, dass der Roboter ein Polynom von seinem Startpunkt zum Endpunkt erstellt. Der Roboter stellt eine Richtung in seiner X1-X2-Ebene als die unabhängige Variable des Polynoms und die andere Richtung als die abhängige Variable des Polynoms fest. Im Folge ist die Herleitung der Koeffizienten: 
+
+\begin{align*}
+    y(x) &= a_3x^3 + a_2x^2 + a_1x + a_0 \\
+    \dot{y}(x) &= 3a_3x^2 + 2a_2x + a_1 \\
+    \ddot{y}(x) &= 6a_3x + 2a_2 
+\end{align*} 
+
+mit 
+\begin{equation*}
+    a_3 = -\frac{2}{x_f^3}(y_1 - y_0), a_2 = \frac{3}{x_f^2}(y_1 - y_0), a_1 = 0, a_0 = y_0.
+\end{equation*}
+Diese Gleichung wird mit der Annahme gel"ost, dass die Geschwindigkeit der Bahn am Anfang und am Ende 0 ist.
+
+Die dritte Methode dafür ist eine zweidimensionale Trajektorie. Der Roboter erstellt eine Bahn zwischen seinem Startpunkt und dem Zielpunkt. Die Bahn ist eine Kombination aus zwei Funktionen \(x_1(t)\) und \(x_2(t)\). Die zwei Funktionen sind parametrisierte Polynomen dritter Grades, die abgeleitet werden können, um die Geschwindigkeit und Drehgeschwindigkeit zu berechnen. Der Anfangspunkt der Herleitung ist die Modellgleichung \ref{eq:model}. Im Folge ist die restliche Herleitung der Geschwindigkeiten: 
+\begin{align*}
+    \begin{bmatrix*}
+        \sin(x_3) & \cos(x_3) & 0 \\
+        0 & 0 & 1
+    \end{bmatrix*}
+    \begin{bmatrix*}
+        \dot{x}_1 \\
+        \dot{x}_2 \\
+        \dot{x}_3
+    \end{bmatrix*}
+    &=
+    \begin{bmatrix*}
+        \sin(x_3) & \cos(x_3) & 0 \\
+        0 & 0 & 1
+    \end{bmatrix*}
+    \begin{bmatrix*}
+        \sin(x_3) & 0 \\
+        \cos(x_3) & 0 \\
+        0 & 1
+    \end{bmatrix*}
+    \begin{bmatrix*}
+        v \\
+        \omega
+    \end{bmatrix*} \\
+    \begin{bmatrix*}
+        \sin(x_3) & \cos(x_3) & 0 \\
+        0 & 0 & 1
+    \end{bmatrix*}
+    \begin{bmatrix*}
+        \dot{x}_1 \\
+        \dot{x}_2 \\
+        \dot{x}_3
+    \end{bmatrix*}
+    &=
+    \begin{bmatrix*}
+        \sin^2(x_3) + \cos^2(x_3) & 0 \\
+        0 & 1
+    \end{bmatrix*}
+    \begin{bmatrix*}
+        v \\
+        \omega
+    \end{bmatrix*}.
+\end{align*}
+
+Mit \(\sin^2(\alpha) + \cos^2(\alpha) = 1\) l"asst sich die obere Gleichung zur folgenden Gleichung vereinfachen:
+\begin{equation}
+    \begin{bmatrix*}
+        v \\
+        \omega
+    \end{bmatrix*}
+    =
+    \begin{bmatrix*}
+        \sin(x_3) & \cos(x_3) & 0 \\
+        0 & 0 & 1
+    \end{bmatrix*}
+    \begin{bmatrix*}
+        \dot{x}_1 \\
+        \dot{x}_2 \\
+        \dot{x}_3
+    \end{bmatrix*}.
+\end{equation}
+
+\(x_3\) l"asst sich aus dem Winkel von der \(\dot{X}_2\)-Richtung berechnen. Mit den folgenden Gleichungen
+\begin{align*}
+    x_3 &= \arctan(\frac{\dot{x}_2}{\dot{x}_1}) \\
+    \frac{d}{dt}x_3 &= \frac{d}{dt}\arctan(\frac{\dot{x}_2}{\dot{x}_1})
+\end{align*}
+kann \(\omega\) bestimmt werden. Der Roboter verwendet die folgende Gleichung, um die richtige Drehgeschwindigkeit zu berechnen.
+\begin{equation}
+    \dot{x}_3 = \frac{\dot{x}_1\ddot{x}_2 - \dot{x}_2\ddot{x}_1}{\dot{x}_1^2 + \dot{x}_2^2} = \omega
+\end{equation}
+
+Diese Methode hat die gleiche Vorteile als die eindimensionale Version, aber sie vermindert die Nachteile davon. In dem eindimensionalen Fall muss der Roboter die Parcours Koordinatensystem mit dem Roboters Koordinatensystem übereinstimmen. Danach muss es sich entscheiden, welche Variable unabhängig und abhängig ist, und dann kann der Roboter der Polynom erstellen. Der Roboter berechnet dann die richtige Geschwindigkeit und Drehgeschwindigkeit. In dem zweidimensionalen Fall werden nur die Geschwindigkeiten berechnet. Der zweidimensionale Fall vereinfacht das Prozess bei vielen Schritten, aber diese Methode braucht zwei Polynomen im Gegensatz zu einem. \\
+
+Es ist wichtig, dass die Polynomen f"ur beide Trajektorie dritte Grad oder h"oher sind. Wenn ein Polynom dritter Grades verwendet wird, kann die zweite Ableitung des Polynomes auf Null bei dem Startpunkt und Endpunkt der Bahn gesetzt werden. Diese Randbedingungen erlaubt das L"osen des Gleichungssystems und daraus wird die Koeffizienten des Polynoms berechnet. 
+
+\subsection{Implementierung}
+
+Um die zweidimensionale Trajektorie zu implementieren, muss eine Bahnplanalgorithmus gew"ahlt werden. Es gibt viele Variante, die implementiert werden k"onnen, aber hier wird eine sogennante B\'ezier-Kurve verwendet. Die Koeffizienten der zwei Polynomen unterscheiden sich von dem eindimensionalen Fall, aber die Polynomen sind noch dritter Grad. Die Gleichung der B\'ezier-Kurve hat den folgenden Form:
+\begin{equation*}
+    \overrightarrow{\text{B}}(s) = (1 - s)^3\overrightarrow{\text{P}_0} + 3(1 - s)^2s\overrightarrow{\text{P}_1} + 3(1 - s)s^2\overrightarrow{\text{P}_2} + s^3\overrightarrow{\text{P}_3}, s \in [0, 1].
+\end{equation*}
+Mit
+\begin{equation*}
+    \overrightarrow{\text{P}_i} =
+    \begin{bmatrix*}
+        x_{1i} \\
+        x_{2i}
+    \end{bmatrix*}
+    , i \in [0, 3]
+\end{equation*}
+
+Eine B\'ezier-Kurve dritter Grades braucht normalerweise vier Kontrollpunkte. Aber es l"asst sich vereinfachen, wenn die vier Kontrollpunkte in einem Viereck sich befinden. Damit k"onnen alle Koeffizienten der zwei Polynomen mit nur zwei Kontrollpunkte gefunden werden. 
+
+\begin{align*}
+    x_1(s) &= 4(x_1 - x_0)s^3 + 6(x_0 - x_1)s^2 + 3(x_1 - x_0)s + x_0 \\
+    \dot{x}_1(s) &= 12(x_1 - x_0)s^2 + 12(x_0 - x_1)s^2 + 3(x_1 - x_0) \\
+    \ddot{x}_1(s) &= 24(x_1 - x_0)s + 12(x_0 - x_1) \\
+    \\
+    x_2(s) &= 2(y_1 - y_0)s^3 + 3(y_0 - y_1)s^2 + y_1 \\
+    \dot{x}_2(s) &= 6(y_1 - y_0)s^2 + 6(y_0 - y_1)s \\
+    \ddot{x}_2(s) &= 12(y_1 - y_0)s + 6(y_0 - y_1)
+\end{align*}
+
+Die oberen Gleichungen sind nicht einstellbar nach der Zeit \(t\). Sie arbeiten nur mit dem Parameter \(s\), wenn die Kurve unge"andert implementiert wird, ist die Bewegung zu schnell f"ur den Roboter. Deshalb muss eine Funtkion gefunden werden, sodass Parameter \(s\) einstellbar nach der Zeit \(s\) ist. Mit der linearen Gleichung:
+\begin{equation*}
+    s(t) = \frac{t}{T}
+\end{equation*}
+wird eine lineare Beziehung der Parameter \(s\) und die Zeit \(t\) erstellt. T ist die Zeitdauer der Bewegung. Wegen dem Kettenregel m"ussen auch T in den Ableitungen von \(x_1(s(t))\) und \(x_2(s(t))\) ber"ucksichtigt werden. Im Folge sind die ge"anderten Gleichungen:
+\begin{align*}
+    x_1(s(t)) &= 4(x_1 - x_0)s^3 + 6(x_0 - x_1)s^2 + 3(x_1 - x_0)s + x_0 \\
+    \dot{x}_1(s(t)) &= \frac{1}{T}(12(x_1 - x_0)s^2 + 12(x_0 - x_1)s^2 + 3(x_1 - x_0)) \\
+    \ddot{x}_1(s(t)) &= \frac{1}{T^2}(24(x_1 - x_0)s + 12(x_0 - x_1)) \\
+    \\
+    x_2(s(t)) &= 2(y_1 - y_0)s^3 + 3(y_0 - y_1)s^2 + y_1 \\
+    \dot{x}_2(s(t)) &= \frac{1}{T}(6(y_1 - y_0)s^2 + 6(y_0 - y_1)s) \\
+    \ddot{x}_2(s(t)) &= \frac{1}{T^2}(12(y_1 - y_0)s + 6(y_0 - y_1)).
+\end{align*} \\
+
+Mit der Implementation dieser Gleichungen f"ahrt der Roboter erfolgreich die geplante Kurve in der Zeitdauer T.

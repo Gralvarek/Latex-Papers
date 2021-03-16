@@ -1,0 +1,27 @@
+\subsection{Verbesserung des Beispielprogrammes}
+
+Das Beispielprogramm bekommt die diskrete Werte 0, 1, und 2 von Perception, um zu verstehen, ob ein Lichtsensor auf eine schwarze oder weisse Linie ist. Der Roboter ver"andern seine Motoren zwischen zwei PWM-Werten abh"angig von den diskreten Werten, sodass er immer um die Linie oscilliert. \\
+
+Die Schwingungen um die schwarze Linie sind unerw"unscht. Um die Schwingungen zu unterdr"ucken muss der Differenz zwischen den beiden PWM-Werten verkleinert werden. Die PWM-Werten d"urfen auch nicht zu hoch sein oder der Roboter kann die Ecken des Parcours nicht navigieren.
+
+\subsection{Einf\"uhrung eines PID-Reglers}
+
+\begin{figure}
+    \centering
+    \input{Figures/pid_figure.tex}
+    \caption{Regelkreis}
+    \label{fig:regelkreis}
+\end{figure}
+
+Nun wird nur eine Regelgr"o"se \(y(t)\) betrachtet. Die ist der Differenz zwischen den linken und rechten Lichtintensit"aten der Lichtsensoren.
+\begin{equation}
+    Lichtintensit"at_L - Lichtintensit"at_R = Regelgr"o"se \: y(t)
+\end{equation}
+
+ Der Bereich der Regelgr"o"se liegt zwischen \si{-100\percent} und \si{100\percent}. Die zwei Werte bedeuten, dass bei -100\% der rechte Lichtsensor auf weiss liegt und der linke Lichtsensor auf schwarz liegt und bei \si{100\percent} das Gegenteil. Die F"uhrungsgr"o"se \(x(t)\) ist \si{0\percent}, weil dabei beiden Lichtsensoren auf weiss liegen. Der Regelfehler \(e(t)\) ist unver"andert. Es gibt nur ein Tupel von PID-Konstanten \({Kp,Ki,Kd}\) und deshalb ist nur ein Regelkreis ben"otigt, der nochmal in Abbildung \ref{fig:regelkreis} zu sehen ist. Bevor die Ausgabe des Reglers direkt in den Motoren geschickt werden kann, muss zuerst das Vorzeichen von der rechten Motoreingabe umgekehrt werden. Falls die beiden Eingabe der Motoren positiv w"aren, f"uhrt der Regelkreis zu einer Mitkopplung auf dem rechten Motor statt Gegenkopplung. Dieses liegt an dem ver"andernten Bereich der Regelgr"o"se, weil der nun negative Werte besitzt. Negative Werte bedeuten eine rechte Ablenkung, deshalb muss der rechte Motor einen positiven PWM-Wert bekommen und der linke Motor das Gegenteil, um diese Ablenkung zu kompensieren. \\
+
+Diese Methode funktioniert mit wenigen Problemen und der Roboter verfolgt die Linie mit den folgenden PID-Konstanten 
+\begin{equation*}
+    \left(Kp, Ki, Kd\right) = \left(\num{0.4}, \num{0.2}, \num{0.0565}\right).
+\end{equation*}
+Manchmal "uberspringt der Roboter eine Ecke und l"auft der Roboter in einem Kreis, ohne die Linie wieder zu erkennen. Dieses Verhalten passiert selten, aber scheint es darauf, haupts"achlich die Konversion zwischen Gleitkommazahlen und Integerzahlen. Der Regler gibt Gleitkommazahlen aus, aber die Motoren brauchen Integerwerten. Deswegen muss der Roboter die Ausgabe des Reglers von Double zu Integer typecasten. Das Typecasten f"uhrt zu Ungenauigkeiten in den PWM-Werten, deswegen w"urde der Roboter zu weit ablenken und weg von der Linie fahren.

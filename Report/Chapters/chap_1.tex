@@ -1,0 +1,33 @@
+    
+\subsection{Motivation, Aufgabenstellung / Ziel des Semesters}
+
+In diesem Seminar muss einen Roboter einen Parcour umfahren, eine Parklücke erkennen, darin einparken und dann ausparken. Dieses Seminar ist eine kleine Version des aktuellen Technikproblems von autonomem Fahren. Der Parcour ist im Abbildung \ref{fig:map} zu sehen. \\
+
+\begin{figure}
+    \centering
+    \includegraphics{map}
+    \caption{Parcour}
+    \label{fig:map}
+\end{figure}
+
+Das Seminarprojekt besteht aus f"unf Modulen, die jeweils von einem Gruppenmitglied bearbeitet werden. Die Module sind Guidance, Control, Navigation, Perception und Human-Machine-Interface (HMI). Guidance koordiniert die andere vier Modulen, sodass der Roboter sein Ziel erreichen kann. Control steuert die Bewegung des Roboters. Navigation stellt die aktuelle Position des Roboters fest und identifiziert die Parklücke. Perception k"ummert sich um die Messfehler der Sensoren und berechnet, wie pr"asizese sie sind. HMI erstellt eine Android-App, um ein Interface mit dem Roboter zu haben, sodass ein Benutzer dem Roboter Kommandos geben kann. \\
+
+Die f"unf Module arbeiten eng zusammen. Zum Beispiel muss Navigation mit Perception arbeiten, sodass der Roboter die Messfehler der Sensoren ausgleichen kann, um eine richtige aktuelle Position zu berechnen. Diese Beziehung zwischen den Modulen ist "ahnlich wie bei einer reellen Anwendung, weil ein Projekt normalerweise nicht durch nur eine Person erarbeitet werden kann. Stattdessen m"ussen viele Aufgaben parallel abgeschlossen werden, um das Projekt abzuschlie"sen. \\
+
+Der Fokus dieser Seminararbeit sind das Control-Modul und alle Teilaufgaben, die dazu geh"oren. \\
+
+\subsection{Zusammenfassung der einzelnen Teilaufgaben}
+
+Das Control-Modul hat vier Teilaufgaben: Linieverfolgung, \(v/\omega\)-Control, geregeltes Geradeausfahren und Ein-/Ausparken. \\
+
+F"ur die Linienverfolgung muss der Roboter mit zwei Lichtsensoren einer schwarzen Linie schnellstm"oglichst folgen und um die Ecken des Parcours navigieren. \\
+
+F"ur die \(v/\omega\)-Control muss eine Methode implementiert werden, sodass der Roboter mit einer konstanten Geschwindigkeit und Drehgeschwindigkeit fahren kann. Mit dieser Methode soll der Roboter einfache Kreise, Ellipsen, und f"ur kurze Strecken gerade ausfahren k"onnen. \\
+
+Die dritte Teilaufgabe ist die Verbesserung des Geradeausfahrens. Der Roboter muss nun f"ur lange Strecken gerade ausfahren. \\
+
+Die vierte und letzte Teilaufgabe ist die Entwicklung eines Algorithmus f"ur das Ein-/Ausparken des Roboters. Diese Aufgabe muss in enger Zussamenarbeit mit dem Guidance-Modul abgeschlossen werden. Das Guidance-Modul liefert Control die Information, wohin der Roboter fahren muss. Control implementiert einen Algorithmus, sodass der Roboter diese Information in eine Bahn "ubersetzt kann.
+
+\subsection{\"Ubergabeparameter von / zu Control-Modul}
+
+Das Control-Modul ist das Herz des Roboters. Ohne das Control-Modul kann der Roboter sich nicht bewegen und es braucht im Vergleich zu den anderen Modulen die meistene Parameter. F"ur die Linienverfolgung braucht Control die Werte der Lichtsensoren von Perception und f"ur \(v/\omega\)-Control braucht Control die Werte der beiden Motorenencoder, sodass eine sinnvolle Regelung implementiert wird. F"ur die Geradeausfahrt wird die aktuelle Position gebraucht, die von Navigation berechnet wird. Das Ein-/Ausparken ben"otigt die Parkbahn von Guidance. Die Parkbahn ist abh"angig von dem implementierten Algorithmus und kann auf entweder Zielpunkten oder Polynomen basieren.

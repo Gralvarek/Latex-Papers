@@ -1,0 +1,56 @@
+\documentclass{standalone}
+\usepackage{babel}
+\usepackage{german}
+\usepackage{textcomp}
+\usepackage{tikz}
+\usepackage{mathtools}
+\usepackage{nicefrac}
+\usetikzlibrary{shapes,arrows,positioning}
+\begin{document}
+\tikzset{
+block/.style    = {draw, thick, rectangle, minimum height = 3em,
+  minimum width = 3em},
+sum/.style      = {draw, circle, node distance = 2cm, inner sep = 0pt,
+minimum size = 0.5cm}, % Adder
+input/.style    = {coordinate}, % Input
+output/.style   = {coordinate} % Output
+}
+\newcommand{\suma}{\Large$+$}
+\newcommand{\inte}{$\displaystyle \int$}
+\newcommand{\derv}{\huge$\frac{d}{dt}$}
+\begin{tikzpicture}[auto, thick, node distance=2cm, >=triangle 45]
+\node [block] (matrix) {\(
+        \begin{psmallmatrix}
+            1 & \nicefrac{-d}{2} \\
+            1 & \nicefrac{d}{2} 
+        \end{psmallmatrix}
+    \)}
+;
+\node [input, left=of matrix.160] (vm) {};
+\node [input, left=of matrix.200] (w) {};
+
+\node [block, right=of matrix] (radius) {\(\dfrac{1}{R_{l,r}}\)};
+\node [input, right=of matrix.20] (vl) {\(v\)};
+\node [input, right=of matrix.340] (vr) {\(\omega\)};
+
+\node [block, right=of radius] (function) {Steuerung};
+\node [input, right=of radius.30] (wl) {};
+\node [input, right=of radius.330] (wr) {};
+
+\node [input, right=of function.20] (ul) {};
+\node [input, right=of function.340] (ur) {};
+
+\draw[->] (vm) -- node {\(v_m\)} (matrix.160);
+\draw[->] (w) -- node [below] {\(\omega\)} (matrix.200);
+
+\draw[->] (matrix.20) -- node {\(v_l\)} (vl);
+\draw[->] (matrix.340) -- node [below] {\(v_r\)} (vr);
+
+\draw[->] (radius.30) -- node {\(\omega_l\)} (wl);
+\draw[->] (radius.330) -- node [below] {\(\omega_r\)} (wr);
+
+\draw[->] (function.20) -- node {\(u_{PWM,l}\)} (ul);
+\draw[->] (function.340) -- node [below] {\(u_{PWM,r}\)} (ur);
+
+\end{tikzpicture}
+\end{document}

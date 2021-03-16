@@ -1,0 +1,61 @@
+% Title: Block diagram of Third order noise shaper in Compact Disc Players
+% Author: Ramón Jaramillo
+\documentclass{standalone}
+\usepackage{babel}
+\usepackage{german}
+\usepackage{textcomp}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows}
+\begin{document}
+% Definition of blocks:
+\tikzset{
+block/.style    = {draw, thick, rectangle, minimum height = 3em,
+  minimum width = 3em},
+sum/.style      = {draw, circle, node distance = 2cm, inner sep = 0pt,
+minimum size = 0.5cm}, % Adder
+input/.style    = {coordinate}, % Input
+output/.style   = {coordinate} % Output
+}
+% Defining string as labels of certain blocks.
+\newcommand{\suma}{\Large$+$}
+\newcommand{\inte}{$\displaystyle \int$}
+\newcommand{\derv}{\huge$\frac{d}{dt}$}
+\begin{tikzpicture}[auto, thick, node distance=2.25cm, >=triangle 45]
+\draw
+% Drawing the blocks of first filter :
+    node at (0,0) [right=0mm]{}
+    node [input] (input1) {} 
+    node [sum, right of=input1] (suma1) {\suma}
+    node [right of=suma1] (branch1) {}
+    node [block, right of=branch1] (Ki) {$\displaystyle Ki\cdot\int_{0}^{t} e(t)\, dt$}
+    node [block, above of=Ki] (Kp) {$Kp \cdot e(t)$}
+    node [block, below of=Ki] (Kd) {$Kd\cdot\frac{d}{dt} e(t)$}
+    node [sum, right of=Ki] (suma2) {\suma}
+    node [block, right of=suma2] (plant) {Regelstrecke}
+    node [right of=plant] (branch2) {}
+    node [output, right of=branch2] (output1) {}
+    node [below of=Kd] (branch3) {}
+;
+
+% Joining blocks. 
+% Commands \draw with options like [->] must be written individually
+\draw[->] (input1) -- node {$x(t)$} (suma1);
+\draw[-] (suma1) -- node {$e(t)$} (branch1.center);
+\draw[->] (branch1.center) -- (Ki);
+\draw[->] (branch1.center) |- (Kp);
+\draw[->] (branch1.center) |- (Kd);
+\draw[->] (Ki) -- (suma2);
+\draw[->] (Kp) -| (suma2);
+\draw[->] (Kd) -| (suma2);
+\draw[-] (suma2) -- node {\(u(t)\)} (plant);
+\draw[-] (plant) -- (branch2.center);
+\draw[-] (branch2.center) |- (branch3.center);
+\draw[->] (branch2.center) -- node {$y(t)$} (output1);
+\draw[->] (branch3.center) -| node[pos=0.97, xshift=-5] {\huge $-$} (suma1);
+
+\filldraw
+    (branch1) circle (2pt)
+    (branch2) circle (2pt)
+;
+\end{tikzpicture}
+\end{document}
